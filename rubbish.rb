@@ -2,10 +2,12 @@ require 'etc'
 
 class Rubbish
   def initialize
+    @pwd = ENV['PWD']
+    @previous_dir = @pwd
     while true
       hostname = `hostname`.chomp.split('.').first
-      pwd = ENV['PWD'].gsub(Etc.getpwuid.dir, '~')
-      @prompt = "#{ENV['USER']}@#{hostname}:#{pwd}$ "
+      @pwd = @pwd.gsub(Etc.getpwuid.dir, '~')
+      @prompt = "#{ENV['USER']}@#{hostname}:#{@pwd}$ "
       print @prompt
       
       arr = gets
@@ -15,7 +17,8 @@ class Rubbish
         @command = arr.first
         if @command
           @command = @command.to_sym
-        else next
+        else 
+          next
         end
       rescue ArgumentError => e
         puts 'ERROR ERROR ERROR'
@@ -44,15 +47,21 @@ class Rubbish
   def cd(dir)
     begin
       home = Etc.getpwuid.dir
+      old_prev_dir = @previous_dir
       if dir.nil?
+        @previous_dir = Dir.pwd
         Dir.chdir(home)
       else
         dir = dir.first.gsub('~', home)
+        dir = @previous_dir if dir == '-'
+        @previous_dir = Dir.pwd
         Dir.chdir(dir)
       end
     rescue Errno::ENOENT => e
       puts "No such directory: #{dir}"
+      @previous_dir = old_prev_dir
     end
+    @pwd = Dir.pwd
     return nil
   end
   
