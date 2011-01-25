@@ -12,7 +12,11 @@ class Rubbish
       return if arr.nil?
       arr = arr.chomp.split(' ')
       begin
-        @command = arr.first.to_sym
+        @command = arr.first
+        if @command
+          @command = @command.to_sym
+        else next
+        end
       rescue ArgumentError => e
         puts 'ERROR ERROR ERROR'
       end
@@ -29,13 +33,15 @@ class Rubbish
       else
         output = send(@command, @arguments)
       end
-      if !@system_command && output && !output.blank?
+      if @system_command
+        puts "No command or method found: #{@command}" unless output
+      elsif output && !output.blank?
         puts output
       end
     end
   end
   
-  def cd(dir)      
+  def cd(dir)
     begin
       home = Etc.getpwuid.dir
       if dir.nil?
