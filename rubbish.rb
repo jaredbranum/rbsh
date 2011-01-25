@@ -1,9 +1,12 @@
-
+require 'etc'
 
 class Rubbish
   def initialize
     while true
-      print '$ '
+      hostname = `hostname`.chomp.split('.').first
+      pwd = ENV['PWD'].gsub(Etc.getpwuid.dir, '~')
+      @prompt = "#{ENV['USER']}@#{hostname}:#{pwd}$ "
+      print @prompt
       
       arr = gets
       return if arr.nil?
@@ -19,18 +22,28 @@ class Rubbish
         @arguments = arr[1..-1]
       end
       
+      @system_command = false
+      
       if @command == :initialize
         output = method_missing(@command, @arguments)
       else
         output = send(@command, @arguments)
       end
-      puts output if output && !output.empty?
+      if !@system_command && output && !output.blank?
+        puts output
+      end
     end
   end
   
-  def cd(dir)
+  def cd(dir)      
     begin
-      Dir.chdir(dir.first)
+      home = Etc.getpwuid.dir
+      if dir.nil?
+        Dir.chdir(home)
+      else
+        dir = dir.first.gsub('~', home)
+        Dir.chdir(dir)
+      end
     rescue Errno::ENOENT => e
       puts "No such directory: #{dir}"
     end
@@ -38,11 +51,12 @@ class Rubbish
   end
   
   def method_missing(sym, *args, &block)
+    @system_command = true
     exec = sym.to_s
     if args && !args.empty?
-      args.each { |arg| exec += " #{arg}" }
+      args.each { |arg| exec += " #{arg.to_s}" }
     end
-    `#{exec}`
+    system "#{exec}"
   end
   
 end
