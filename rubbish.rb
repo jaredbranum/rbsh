@@ -1,9 +1,13 @@
+
+
 class Rubbish
   def initialize
     while true
       print '$ '
       
-      arr = gets.chomp.split(' ')
+      arr = gets
+      return if arr.nil?
+      arr = arr.chomp.split(' ')
       begin
         @command = arr.first.to_sym
       rescue ArgumentError => e
