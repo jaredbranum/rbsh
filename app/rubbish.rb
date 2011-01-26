@@ -2,17 +2,18 @@ require 'readline'
 require 'etc'
 
 class Rubbish
-    # read ~/.rubbishrc.rb
-    begin
-      require Etc.getpwuid.dir + '/.rubbishrc'
-    rescue LoadError => e # no .rubbishrc.rb file found
-    end
-  
   def initialize
     @home = Etc.getpwuid.dir
-    @running = true
-    @pwd = ENV['PWD']
-    @previous_dir = @pwd
+    @running ||= true
+    @pwd ||= ENV['PWD']
+    @previous_dir ||= @pwd
+    
+    # read ~/.rubbishrc.rb
+    begin
+      load @home + '/.rubbishrc.rb'
+    rescue LoadError => e # no .rubbishrc.rb file found
+    end
+    nil
   end
   
   def main
