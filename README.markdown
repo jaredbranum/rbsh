@@ -1,5 +1,5 @@
-# Rubbish
-## A Ruby Shell
+## Rubbish
+### A Ruby Shell
 
 Usage: ruby rubbish.rb
 

@@ -1,3 +1,4 @@
+require 'readline'
 require 'etc'
 
 class Rubbish
@@ -8,9 +9,9 @@ class Rubbish
       hostname = `hostname`.chomp.split('.').first
       @pwd = @pwd.gsub(Etc.getpwuid.dir, '~')
       @prompt = "#{ENV['USER']}@#{hostname}:#{@pwd}$ "
-      print @prompt
+      pwd = ENV['PWD'].gsub(Etc.getpwuid.dir, '~')
       
-      arr = gets
+      arr = Readline.readline(@prompt, true)
       return if arr.nil?
       arr = arr.chomp.split(' ')
       begin
