@@ -2,47 +2,55 @@ require 'readline'
 require 'etc'
 
 class Rubbish
-  def initialize
+  def main
+    @running = true
     @pwd = ENV['PWD']
     @previous_dir = @pwd
-    while true
+    while @running
       hostname = `hostname`.chomp.split('.').first
       @pwd = @pwd.gsub(Etc.getpwuid.dir, '~')
       @prompt = "#{ENV['USER']}@#{hostname}:#{@pwd}$ "
-      pwd = ENV['PWD'].gsub(Etc.getpwuid.dir, '~')
       
       arr = Readline.readline(@prompt, true)
-      return if arr.nil?
-      arr = arr.chomp.split(' ')
-      begin
-        @command = arr.first
-        if @command
-          @command = @command.to_sym
-        else 
-          next
+      if arr.nil?
+        print "\n"
+        exit
+      else      
+        arr = arr.chomp.split(' ')
+        begin
+          @command = arr.first
+          if @command
+            @command = @command.to_sym
+          else 
+            next
+          end
+        rescue ArgumentError => e
+          puts 'ERROR ERROR ERROR'
         end
-      rescue ArgumentError => e
-        puts 'ERROR ERROR ERROR'
-      end
-      if arr[1..-1].empty?
-        @arguments = nil
-      else
-        @arguments = arr[1..-1]
-      end
+        if arr[1..-1].empty?
+          @arguments = nil
+        else
+          @arguments = arr[1..-1]
+        end
       
-      @system_command = false
+        @system_command = false
       
-      if @command == :initialize
-        output = method_missing(@command, @arguments)
-      else
-        output = send(@command, @arguments)
-      end
-      if @system_command
-        puts "No command or method found: #{@command}" unless output
-      elsif output && !output.blank?
-        puts output
+        if @command == :main
+          output = method_missing(@command, @arguments)
+        else
+          output = send(@command, @arguments).inspect
+        end
+        if @system_command
+          puts "No command or method found: #{@command}" unless output
+        elsif output && !output.empty?
+          puts '=> ' + output
+        end
       end
     end
+  end
+  
+  def exit(*args)
+    @running = false
   end
   
   def cd(dir)
@@ -76,5 +84,3 @@ class Rubbish
   end
   
 end
-
-Rubbish.new
