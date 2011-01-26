@@ -7,13 +7,13 @@ describe Rubbish do
   
   it "should send() user input as a method" do
     Readline.stub!(:readline).and_return("public_methods", nil)
-    @rubbish.should_receive(:send).with(:public_methods, nil)
+    @rubbish.should_receive(:send).with(:public_methods)
     @rubbish.main
   end
   
   it "should call method_missing for unknown commands" do
     Readline.stub!(:readline).and_return("ls", nil)
-    @rubbish.should_receive(:method_missing).with(:ls, nil)
+    @rubbish.should_receive(:method_missing).with(:ls)
     @rubbish.main
   end
   

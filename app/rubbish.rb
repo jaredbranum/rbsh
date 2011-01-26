@@ -2,13 +2,23 @@ require 'readline'
 require 'etc'
 
 class Rubbish
-  def main
+    # read ~/.rubbishrc.rb
+    begin
+      require Etc.getpwuid.dir + '/.rubbishrc'
+    rescue LoadError => e # no .rubbishrc.rb file found
+    end
+  
+  def initialize
+    @home = Etc.getpwuid.dir
     @running = true
     @pwd = ENV['PWD']
     @previous_dir = @pwd
+  end
+  
+  def main
     while @running
       hostname = `hostname`.chomp.split('.').first
-      @pwd = @pwd.gsub(Etc.getpwuid.dir, '~')
+      @pwd = @pwd.gsub(@home, '~')
       @prompt = "#{ENV['USER']}@#{hostname}:#{@pwd}$ "
       
       arr = Readline.readline(@prompt, true)
@@ -38,11 +48,11 @@ class Rubbish
         if @command == :main
           output = method_missing(@command, @arguments)
         else
-          output = send(@command, @arguments).inspect
+          output = @arguments.nil? ? send(@command) : send(@command, @arguments)
+          output = output.inspect unless output.nil?
         end
-        if @system_command
-          puts "No command or method found: #{@command}" unless output
-        elsif output && !output.empty?
+
+        if !@system_command && output && !output.empty?
           puts '=> ' + output
         end
       end
@@ -55,13 +65,12 @@ class Rubbish
   
   def cd(dir)
     begin
-      home = Etc.getpwuid.dir
       old_prev_dir = @previous_dir
       if dir.nil?
         @previous_dir = Dir.pwd
-        Dir.chdir(home)
+        Dir.chdir(@home)
       else
-        dir = dir.first.gsub('~', home)
+        dir = dir.first.gsub('~', @home)
         dir = @previous_dir if dir == '-'
         @previous_dir = Dir.pwd
         Dir.chdir(dir)
@@ -80,7 +89,9 @@ class Rubbish
     if args && !args.empty?
       args.each { |arg| exec += " #{arg.to_s}" }
     end
-    system "#{exec}"
+    sys_output = system "#{exec}"
+    puts "No command or method found: #{exec}" unless sys_output
+    return sys_output
   end
   
 end
