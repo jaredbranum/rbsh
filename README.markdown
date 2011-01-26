@@ -1,7 +1,7 @@
 ## Rubbish
 ### A Ruby Shell
 
-Usage: ruby rubbish.rb
+Usage: ruby main.rb
 
 Use the shell as you would any shell (bash, zsh, ksh). Lots of things don't work yet. Ruby does, which is pretty sweet. You can do either:
 
