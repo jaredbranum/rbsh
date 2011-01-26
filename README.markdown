@@ -11,16 +11,14 @@ or
 <pre>
 puts 'hi'</pre>
 
-Preference is given to ruby methods over shell commands and programs, so if you have a binary named <pre>public_methods</pre>, you'll need to pass it to sh or bash to get it to run for now.
+Preference is given to ruby methods over shell commands and programs, so if you have a binary named _public_methods_, you'll need to pass it to sh or bash to get it to run for now.
 
 New methods can be defined in a .rubbishrc.rb file in your home directory. For example:
-_~/.rubbishrc.rb_
 <pre>
+# contents of ~/.rubbishrc.rb
 def amazing
   puts 'so cool!!!!!!'
 end</pre>
-
-_shell_
 <pre>
 $ amazing
 so cool!!!!!!</pre>
