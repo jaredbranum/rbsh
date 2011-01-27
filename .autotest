@@ -1,0 +1,9 @@
+Autotest.add_hook(:initialize) {|at|
+  at.add_exception %r{^\.git}
+  at.add_exception %r{^./tmp}
+  #  at.clear_mappings         # take out the default (test/test*rb)
+  at.add_mapping(%r{^app/.*\.rb$}) {|f, _|
+    Dir['spec/**/*.rb']
+  }
+  nil
+}
