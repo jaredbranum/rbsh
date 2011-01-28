@@ -1,7 +1,7 @@
-## Rubbish
+## rbsh
 ### A Ruby Shell
 
-Usage: ruby main.rb
+Usage: ./rbsh
 
 Use the shell as you would any shell (bash, zsh, ksh). Lots of things don't work yet. Ruby does, which is pretty sweet. You can do either:
 
@@ -11,7 +11,7 @@ or
 <pre>
 puts 'hi'</pre>
 
-Preference is given to ruby methods over shell commands and programs, so if you have a binary named _public_methods_, you'll need to pass it to sh or bash to get it to run for now.
+Preference is given to ruby methods over shell commands and programs, so if you have a binary named _public_methods_, you'll need to pass it to sh or bash or whatever to get it to run for now.
 
 New methods can be defined in a .rubbishrc.rb file in your home directory. For example:
 <pre>

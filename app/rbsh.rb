@@ -1,17 +1,17 @@
 require 'readline'
 require 'etc'
 
-class Rubbish
+class Rbsh
   def initialize
     @home = Etc.getpwuid.dir
     @running ||= true
     @pwd ||= ENV['PWD']
     @previous_dir ||= @pwd
     
-    # read ~/.rubbishrc.rb
+    # read ~/.rbshrc.rb
     begin
-      load @home + '/.rubbishrc.rb'
-    rescue LoadError => e # no .rubbishrc.rb file found
+      load @home + '/.rbshrc.rb'
+    rescue LoadError => e # no .rbshrc.rb file found
     end
     nil
   end
@@ -20,7 +20,7 @@ class Rubbish
     while @running
       hostname = `hostname`.chomp.split('.').first
       @pwd = @pwd.gsub(@home, '~')
-      @prompt = "#{ENV['USER']}@#{hostname}:#{@pwd}$ "
+      @prompt = ENV['PS1'] #"#{ENV['USER']}@#{hostname}:#{@pwd}$ "
       
       @command = Readline.readline(@prompt, true)
       if @command.nil?

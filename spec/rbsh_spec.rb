@@ -1,8 +1,8 @@
-require File.expand_path(File.dirname(__FILE__) + '/../app/rubbish')
+require File.expand_path(File.dirname(__FILE__) + '/../app/rbsh')
 
-describe Rubbish do
+describe Rbsh do
   before do
-    @shell = Rubbish.new
+    @shell = Rbsh.new
   end
   
   it "should eval() user input unless special conditions are met" do

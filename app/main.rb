@@ -1,2 +1,2 @@
-require 'rubbish'
+require 'rbsh'
 Rubbish.new.main
