@@ -20,7 +20,7 @@ class Rbsh
     while @running
       hostname = `hostname`.chomp.split('.').first
       @pwd = @pwd.gsub(@home, '~')
-      @prompt = ENV['PS1'] #"#{ENV['USER']}@#{hostname}:#{@pwd}$ "
+      @prompt = "#{ENV['USER']}@#{hostname}:#{@pwd}$ "
       
       @command = Readline.readline(@prompt, true)
       if @command.nil?

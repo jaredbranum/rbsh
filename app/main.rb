@@ -1,2 +1,2 @@
 require 'rbsh'
-Rubbish.new.main
+Rbsh.new.main
