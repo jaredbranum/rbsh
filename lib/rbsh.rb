@@ -9,10 +9,14 @@ class Rbsh
     @pwd ||= ENV['PWD']
     @previous_dir ||= @pwd
     
-    # read ~/.rbshrc.rb
+    # read ~/.rbshrc and/or ~/.rbshrc.rb
+    begin
+      load @home + '/.rbshrc'
+    rescue LoadError => e
+    end
     begin
       load @home + '/.rbshrc.rb'
-    rescue LoadError => e # no .rbshrc.rb file found
+    rescue LoadError => e
     end
     nil
   end
