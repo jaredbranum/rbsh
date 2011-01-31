@@ -1,5 +1,6 @@
 require 'readline'
 require 'etc'
+require 'lib/rbsh_helper'
 
 class Rbsh
   def initialize
@@ -26,33 +27,18 @@ class Rbsh
       if @command.nil?
         print "\n"
         exit
-      else      
-        #arr = arr.chomp.split(' ')
-        # begin
-        #   @command = arr.first
-        #   if @command
-        #     @command = @command.to_sym
-        #   else 
-        #     next
-        #   end
-        # rescue ArgumentError => e
-        #   puts 'ERROR ERROR ERROR'
-        # end
-        # if arr[1..-1].empty?
-        #   @arguments = nil
-        # else
-        #   @arguments = arr[1..-1]
-        # end
-      
+      elsif @command.strip == '#'
+        multi_line
+      else
         @system_command = false
       
         if @command == "main"
           output = method_missing(@command)
         else
           # special case for cd
-          split_com = @command.split(/[ |\(]/, 2)
+          split_com = @command.split(/(\s+|\()/, 2)
           if split_com.first == "cd"
-            output = send(:cd, split_com[1])
+            output = send(:cd, split_com[-1])
           else
             #output = @arguments.nil? ? send(@command) : send(@command, @arguments)
             begin
@@ -70,6 +56,21 @@ class Rbsh
           puts '=> ' + output
         end
       end
+    end
+  end
+  
+  def multi_line
+    @command = ""
+    input = @command
+    while input != '#'
+      input = Readline.readline('> ', true)
+      return if input.nil?
+      @command += input.to_s + "\n"
+    end
+    begin
+      eval(@command)
+    rescue Exception => e
+      puts e.message
     end
   end
   
@@ -99,10 +100,7 @@ class Rbsh
   
   def method_missing(sym, *args, &block)
     return if @system_command
-    exec = @command #.to_s
-    # if args && !args.empty?
-    #   args.each { |arg| exec += " #{arg.to_s}" }
-    # end
+    exec = @command
     sys_output = system "#{exec}"
     @system_command = true
     puts "No command or method found: #{exec}" unless sys_output

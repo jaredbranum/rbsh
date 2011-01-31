@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../app/rbsh')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh')
 
 describe Rbsh do
   before do
