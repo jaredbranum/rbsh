@@ -45,9 +45,11 @@ class Rbsh
               output = eval(@command)
               output = output.inspect unless output.nil?
             rescue NameError => e
-              method_missing(@command)
+              system_call
             rescue SyntaxError => e
-              method_missing(@command)
+              system_call
+            rescue ArgumentError => e
+              system_call
             end
           end
         end
@@ -74,8 +76,21 @@ class Rbsh
     end
   end
   
+  def system_call
+    return if @system_command
+    exec = @command
+    sys_output = system "#{exec}"
+    @system_command = true
+    puts "No command or method found: #{exec}" unless sys_output
+    return sys_output
+  end
+  
   def exit(*args)
     @running = false
+  end
+  
+  def quit(*args)
+    exit
   end
   
   def cd(dir=nil)
@@ -99,12 +114,7 @@ class Rbsh
   end
   
   def method_missing(sym, *args, &block)
-    return if @system_command
-    exec = @command
-    sys_output = system "#{exec}"
-    @system_command = true
-    puts "No command or method found: #{exec}" unless sys_output
-    return sys_output
+    system_call
   end
   
 end
