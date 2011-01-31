@@ -13,7 +13,7 @@ puts 'hi'</pre>
 
 Preference is given to ruby methods over shell commands and programs, so if you have a binary named _public_methods_, you'll need to pass it to sh or bash or whatever to get it to run for now.
 
-Input is limited to a single line by default. In order to write Ruby across multiple lines, you must enter multi-line mode. To enter multi-line mode, input either 'multi_line' or '#' at the terminal prompt. To end multi-line mode and evaluate the Ruby code entered thus far, enter '#' on a line by itself.  
+Input is limited to a single line by default. In order to write Ruby across multiple lines, you must enter multi-line mode. To enter multi-line mode, input either _multi_line_ or _#_ at the terminal prompt. To end multi-line mode and evaluate the Ruby code entered thus far, enter _#_ on a line by itself.  
 Example:
 <pre>
 $ #
