@@ -4,11 +4,17 @@ require 'lib/rbsh_helper'
 
 class Rbsh
   def initialize
+    ENV['SHELL'] = File.expand_path $0
     @home = Etc.getpwuid.dir
     @running ||= true
     @pwd ||= ENV['PWD']
     @previous_dir ||= @pwd
     
+    reload!
+    nil
+  end
+  
+  def reload!
     # read ~/.rbshrc and/or ~/.rbshrc.rb
     begin
       load @home + '/.rbshrc'
@@ -18,14 +24,14 @@ class Rbsh
       load @home + '/.rbshrc.rb'
     rescue LoadError => e
     end
-    nil
+    true
   end
   
   def main
     while @running
       hostname = `hostname`.chomp.split('.').first
       @pwd = @pwd.gsub(@home, '~')
-      @prompt = "#{ENV['USER']}@#{hostname}:#{@pwd}$ "
+      @prompt = ENV['PS1']
       
       @command = Readline.readline(@prompt, true)
       if @command.nil?
@@ -82,10 +88,9 @@ class Rbsh
   
   def system_call
     return if @system_command
-    exec = @command
-    sys_output = system "#{exec}"
+    sys_output = system "#{@command}"
     @system_command = true
-    puts "No command or method found: #{exec}" unless sys_output
+    puts "No command or method found: #{@command}" unless sys_output
     return sys_output
   end
   
