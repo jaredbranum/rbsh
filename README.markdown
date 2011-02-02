@@ -28,7 +28,7 @@ $ Klass.sweet
 super sweet</pre>
 Multi-line input is not (yet) supported for non-Ruby commands.
 
-New methods, aliases, and shell variables can be defined in a .rbshrc file (with an optional.rb extension) in your home directory. This file can contain any valid Ruby code, which will be evaluated within the context of your shell. Instance variables set here will translate to shell environment variables. The _Rbsh.alias()_ method is provided as a convenience, and takes 2 arguments (a symbol and a string)
+New methods, aliases, and shell variables can be defined in a .rbshrc file (with an optional.rb extension) in your home directory. This file can contain any valid Ruby code, which will be evaluated within the context of your shell. Instance variables set here will translate to shell environment variables. The _Rbsh.alias()_ method is provided as a convenience, and takes 2 arguments (a symbol and a string).  
 Example:
 <pre>
 # contents of ~/.rbshrc
