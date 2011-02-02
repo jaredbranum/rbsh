@@ -4,36 +4,50 @@ require 'lib/rbsh_helper'
 
 class Rbsh
   def initialize
-    ENV['SHELL'] = File.expand_path $0
-    @home = Etc.getpwuid.dir
-    @running ||= true
-    @pwd ||= ENV['PWD']
-    @previous_dir ||= @pwd
-    
     reload!
+    
+    @running ||= true
+    @PWD ||= ENV['PWD']
+    @OLD_PWD ||= @PWD
     nil
   end
   
   def reload!
-    # read ~/.rbshrc and/or ~/.rbshrc.rb
+    @PWD ||= ENV['PWD']
+    @HOME ||= ENV['HOME']
+    @PS1 ||= 'rbsh-0.1$ '
     begin
-      load @home + '/.rbshrc'
-    rescue LoadError => e
+      eval(File.new(@HOME + '/.rbshrc').read)
+    rescue Errno::ENOENT => e
+    rescue SyntaxError => e
+      puts "There was a problem with the syntax in your .rbshrc file. Please ensure the file contains valid Ruby."
     end
     begin
-      load @home + '/.rbshrc.rb'
-    rescue LoadError => e
+      eval(File.new(@HOME + '/.rbshrc.rb').read)
+    rescue Errno::ENOENT => e
+    rescue SyntaxError => e
+      puts "There was a problem with the syntax in your .rbshrc.rb file. Please ensure the file contains valid Ruby."
+    end
+    @SHELL = File.expand_path $0
+    instance_variables.each do |var|
+      ENV[var[1..-1]] = instance_variable_get(var)
     end
     true
+  end
+  
+  def self.alias(sym, cmd)
+    define_method sym do
+      system cmd
+      return nil
+    end 
   end
   
   def main
     while @running
       hostname = `hostname`.chomp.split('.').first
-      @pwd = @pwd.gsub(@home, '~')
-      @prompt = ENV['PS1']
+      #@PWD = @PWD.gsub(@HOME, '~')
       
-      @command = Readline.readline(@prompt, true)
+      @command = Readline.readline(@PS1, true)
       if @command.nil?
         print "\n"
         exit
@@ -72,15 +86,14 @@ class Rbsh
   end
   
   def multi_line
-    @command = ""
-    input = @command
+    ruby = input = ""
     while input != '#'
       input = Readline.readline('> ', true)
       return if input.nil?
-      @command += input.to_s + "\n"
+      ruby += input.to_s + "\n"
     end
     begin
-      eval(@command)
+      eval(ruby)
     rescue Exception => e
       puts e.message
     end
@@ -104,21 +117,21 @@ class Rbsh
   
   def cd(dir=nil)
     begin
-      old_prev_dir = @previous_dir
+      old_prev_dir = @OLD_PWD
       if dir.nil?
-        @previous_dir = Dir.pwd
-        Dir.chdir(@home)
+        @OLD_PWD = Dir.pwd
+        Dir.chdir(@HOME)
       else
-        dir = dir.first.gsub('~', @home)
-        dir = @previous_dir if dir == '-'
-        @previous_dir = Dir.pwd
+        dir = dir.first.gsub('~', @HOME)
+        dir = @OLD_PWD if dir == '-'
+        @OLD_PWD = Dir.pwd
         Dir.chdir(dir)
       end
     rescue Errno::ENOENT => e
       puts "No such directory: #{dir}"
-      @previous_dir = old_prev_dir
+      @OLD_PWD = old_prev_dir
     end
-    @pwd = Dir.pwd
+    @PWD = Dir.pwd
     return nil
   end
   
