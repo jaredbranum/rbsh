@@ -20,13 +20,13 @@ class Rbsh
       eval(File.new(@HOME + '/.rbshrc').read)
     rescue Errno::ENOENT => e
     rescue SyntaxError => e
-      puts "There was a problem with the syntax in your .rbshrc file. Please ensure the file contains valid Ruby."
+      RbshHelper.rbshrc_syntax_error
     end
     begin
       eval(File.new(@HOME + '/.rbshrc.rb').read)
     rescue Errno::ENOENT => e
     rescue SyntaxError => e
-      puts "There was a problem with the syntax in your .rbshrc.rb file. Please ensure the file contains valid Ruby."
+      RbshHelper.rbshrc_syntax_error
     end
     @SHELL = File.expand_path $0
     instance_variables.each do |var|
@@ -62,7 +62,7 @@ class Rbsh
           # special case for cd
           split_com = @command.split(/(\s+|\()/, 2)
           if split_com.first == "cd"
-            output = send(:cd, split_com[-1])
+            output = cd(split_com[-1])
           else
             #output = @arguments.nil? ? send(@command) : send(@command, @arguments)
             begin
@@ -136,7 +136,11 @@ class Rbsh
   end
   
   def method_missing(sym, *args, &block)
-    system_call
+    if @running
+      system_command
+    else
+      RbshHelper.rbshrc_syntax_error
+    end
   end
   
 end

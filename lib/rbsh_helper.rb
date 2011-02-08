@@ -1,4 +1,11 @@
 module RbshHelper
+  def self.rbshrc_syntax_error
+    unless @dotfile_error
+      puts "There was a problem with the syntax in your .rbshrc file. Please ensure the file contains valid Ruby."
+      @dotfile_error = true
+    end
+  end
+  
   def self.ruby_indentation_level(str)
     #return 1 unless remove_strings!(str) == 0
     level = 0
