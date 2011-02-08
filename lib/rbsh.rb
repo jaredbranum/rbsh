@@ -1,6 +1,6 @@
 require 'readline'
 require 'etc'
-require 'lib/rbsh_helper'
+require './lib/rbsh_helper'
 
 class Rbsh
   def initialize
