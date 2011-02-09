@@ -6,6 +6,18 @@ module RbshHelper
     end
   end
   
+  def self.parse_ps1(ps1)
+    ps1.gsub(/%./) do |chr|
+      case chr
+      when '%%' then '%'
+      when '%u' then ENV['USER']
+      when '%w' then (!ENV['PWD'].nil?) ? ENV['PWD'].gsub(ENV['HOME'],'~') : ''
+      when '%h' then `hostname`.chomp.split('.').first
+      when '%$' then ENV['USER'] == 'root' ? '#' : '$'
+      end
+    end
+  end
+  
   def self.ruby_indentation_level(str)
     #return 1 unless remove_strings!(str) == 0
     level = 0

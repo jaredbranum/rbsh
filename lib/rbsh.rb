@@ -47,7 +47,7 @@ class Rbsh
       hostname = `hostname`.chomp.split('.').first
       #@PWD = @PWD.gsub(@HOME, '~')
       
-      @command = Readline.readline(@PS1, true)
+      @command = Readline.readline(RbshHelper.parse_ps1(@PS1), true)
       if @command.nil?
         print "\n"
         exit
@@ -120,18 +120,22 @@ class Rbsh
       old_prev_dir = @OLD_PWD
       if dir.nil?
         @OLD_PWD = Dir.pwd
+        ENV['OLD_PWD'] = Dir.pwd
         Dir.chdir(@HOME)
       else
         dir = dir.first.gsub('~', @HOME)
         dir = @OLD_PWD if dir == '-'
         @OLD_PWD = Dir.pwd
+        ENV['OLD_PWD'] = Dir.pwd
         Dir.chdir(dir)
       end
     rescue Errno::ENOENT => e
       puts "No such directory: #{dir}"
       @OLD_PWD = old_prev_dir
+      ENV['OLD_PWD'] = old_prev_dir
     end
     @PWD = Dir.pwd
+    ENV['PWD'] = Dir.pwd
     return nil
   end
   
