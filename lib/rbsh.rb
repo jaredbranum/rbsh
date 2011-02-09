@@ -137,7 +137,7 @@ class Rbsh
   
   def method_missing(sym, *args, &block)
     if @running
-      system_command
+      system_call
     else
       RbshHelper.rbshrc_syntax_error
     end
