@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh')
+require 'etc'
 
 describe Rbsh do
   before do
@@ -7,7 +8,7 @@ describe Rbsh do
   
   it "should eval() user input unless special conditions are met" do
     Readline.stub!(:readline).and_return("public_methods", nil)
-    @shell.should_receive(:eval).with('public_methods')
+    @shell.should_receive(:eval)
     @shell.main
   end
   
@@ -50,6 +51,13 @@ describe Rbsh do
       @shell.cd('/')
       @shell.cd('-')
       Dir.pwd.should == '/bin'
+    end
+  end
+  
+  describe "Rbsh.alias" do
+    it "should call define_method" do
+      Rbsh.should_receive(:define_method).with(:la)
+      Rbsh.alias(:la, "ls -a")
     end
   end
 end

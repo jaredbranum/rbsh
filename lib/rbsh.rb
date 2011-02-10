@@ -1,5 +1,4 @@
 require 'readline'
-require 'etc'
 require './lib/rbsh_helper'
 
 class Rbsh
@@ -16,21 +15,22 @@ class Rbsh
     @PWD ||= ENV['PWD']
     @HOME ||= ENV['HOME']
     @PS1 ||= 'rbsh-0.1$ '
+    @bind ||= binding
     begin
-      eval(File.new(@HOME + '/.rbshrc').read)
+      eval(File.new(@HOME + '/.rbshrc').read, @bind)
     rescue Errno::ENOENT => e
     rescue SyntaxError => e
       RbshHelper.rbshrc_syntax_error
     end
     begin
-      eval(File.new(@HOME + '/.rbshrc.rb').read)
+      eval(File.new(@HOME + '/.rbshrc.rb').read, @bind)
     rescue Errno::ENOENT => e
     rescue SyntaxError => e
       RbshHelper.rbshrc_syntax_error
     end
     @SHELL = File.expand_path $0
     instance_variables.each do |var|
-      ENV[var[1..-1]] = instance_variable_get(var)
+      ENV[var[1..-1]] = instance_variable_get(var) unless var.to_s == '@bind'
     end
     true
   end
@@ -62,11 +62,11 @@ class Rbsh
           # special case for cd
           split_com = @command.split(/(\s+|\()/, 2)
           if split_com.first == "cd"
-            output = cd(split_com[-1])
+            split_com.length == 1 ? cd : cd(split_com[-1])
           else
             #output = @arguments.nil? ? send(@command) : send(@command, @arguments)
             begin
-              output = eval(@command)
+              output = eval(@command, @bind)
               output = output.inspect unless output.nil?
             rescue NameError => e
               system_call
@@ -118,12 +118,12 @@ class Rbsh
   def cd(dir=nil)
     begin
       old_prev_dir = @OLD_PWD
-      if dir.nil?
+      if dir.nil? || dir.empty?
         @OLD_PWD = Dir.pwd
         ENV['OLD_PWD'] = Dir.pwd
         Dir.chdir(@HOME)
       else
-        dir = dir.first.gsub('~', @HOME)
+        dir = dir.gsub('~', @HOME)
         dir = @OLD_PWD if dir == '-'
         @OLD_PWD = Dir.pwd
         ENV['OLD_PWD'] = Dir.pwd
