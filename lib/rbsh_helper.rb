@@ -14,6 +14,8 @@ module RbshHelper
       when '%w' then (!ENV['PWD'].nil?) ? ENV['PWD'].gsub(ENV['HOME'],'~') : ''
       when '%h' then `hostname`.chomp.split('.').first
       when '%$' then ENV['USER'] == 'root' ? '#' : '$'
+      when '%[' then 1.chr
+      when '%]' then 2.chr
       end
     end
   end
