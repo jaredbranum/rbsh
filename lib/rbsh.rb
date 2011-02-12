@@ -2,6 +2,8 @@ require 'readline'
 require './lib/rbsh_helper'
 
 class Rbsh
+  include RbshBuiltins
+  
   def initialize
     reload!
     
@@ -36,10 +38,15 @@ class Rbsh
   end
   
   def self.alias(sym, cmd)
-    define_method sym do
-      system cmd
+    define_method sym do |*args|
+      arg = *args
+      if arg.nil?
+        system cmd
+      else
+        system "#{cmd} #{arg}"
+      end
       return nil
-    end 
+    end
   end
   
   def main
@@ -59,10 +66,10 @@ class Rbsh
         if @command == "main"
           output = method_missing(@command)
         else
-          # special case for cd
-          split_com = @command.split(/(\s+|\()/, 2)
-          if split_com.first == "cd"
-            split_com.length == 1 ? cd : cd(split_com[-1])
+          # special case for builtins
+          split_com = @command.split(/\s+/, 2)
+          if respond_to?(split_com.first)
+            split_com.length == 1 ? send(split_com.first.to_sym) : send(split_com.first.to_sym, split_com.last)
           else
             #output = @arguments.nil? ? send(@command) : send(@command, @arguments)
             begin
@@ -113,30 +120,6 @@ class Rbsh
   
   def quit(*args)
     exit
-  end
-  
-  def cd(dir=nil)
-    begin
-      old_prev_dir = @OLD_PWD
-      if dir.nil? || dir.empty?
-        @OLD_PWD = Dir.pwd
-        ENV['OLD_PWD'] = Dir.pwd
-        Dir.chdir(@HOME)
-      else
-        dir = dir.gsub('~', @HOME)
-        dir = @OLD_PWD if dir == '-'
-        @OLD_PWD = Dir.pwd
-        ENV['OLD_PWD'] = Dir.pwd
-        Dir.chdir(dir)
-      end
-    rescue Errno::ENOENT => e
-      puts "No such directory: #{dir}"
-      @OLD_PWD = old_prev_dir
-      ENV['OLD_PWD'] = old_prev_dir
-    end
-    @PWD = Dir.pwd
-    ENV['PWD'] = Dir.pwd
-    return nil
   end
   
   def method_missing(sym, *args, &block)
