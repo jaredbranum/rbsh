@@ -1,4 +1,14 @@
+require './lib/rbsh_variables'
+
 module RbshBuiltins
+  
+  def exit(*args)
+    RbshVariables.running = false
+  end
+  
+  def quit(*args)
+    exit
+  end
   
   def cd(dir=nil)
     begin

@@ -1,91 +1,55 @@
 require 'readline'
 require './lib/rbsh_helper'
+require './lib/rbsh_variables'
+require './lib/shell'
 
 class Rbsh
-  include RbshBuiltins
   
   def initialize
-    reload!
-    
-    @running ||= true
-    @PWD ||= ENV['PWD']
-    @OLD_PWD ||= @PWD
-    nil
+    @shell ||= Shell.new
   end
-  
-  def reload!
-    @PWD ||= ENV['PWD']
-    @HOME ||= ENV['HOME']
-    @PS1 ||= 'rbsh-0.1$ '
-    @bind ||= binding
-    begin
-      eval(File.new(@HOME + '/.rbshrc').read, @bind)
-    rescue Errno::ENOENT => e
-    rescue SyntaxError => e
-      RbshHelper.rbshrc_syntax_error
-    end
-    begin
-      eval(File.new(@HOME + '/.rbshrc.rb').read, @bind)
-    rescue Errno::ENOENT => e
-    rescue SyntaxError => e
-      RbshHelper.rbshrc_syntax_error
-    end
-    @SHELL = File.expand_path $0
-    instance_variables.each do |var|
-      ENV[var[1..-1]] = instance_variable_get(var) unless var.to_s == '@bind'
-    end
-    true
-  end
-  
-  def self.alias(sym, cmd)
-    define_method sym do |*args|
-      arg = *args
-      if arg.nil?
-        system cmd
-      else
-        system "#{cmd} #{arg}"
-      end
-      return nil
-    end
+
+  def self.alias(*args)
+    Shell.alias(*args)
   end
   
   def main
-    while @running
+    while RbshVariables.running?
       hostname = `hostname`.chomp.split('.').first
       #@PWD = @PWD.gsub(@HOME, '~')
       
-      @command = Readline.readline(RbshHelper.parse_ps1(@PS1), true)
-      if @command.nil?
+      RbshVariables.command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1), true)
+      if RbshVariables.command.nil?
         print "\n"
         exit
-      elsif @command.strip == '#'
+      elsif RbshVariables.command.strip == '#'
         multi_line
       else
-        @system_command = false
+        RbshVariables.system_command = false
       
-        if @command == "main"
+        if RbshVariables.command == "main"
           output = method_missing(@command)
         else
           # special case for builtins
-          split_com = @command.split(/\s+/, 2)
-          if respond_to?(split_com.first)
-            split_com.length == 1 ? send(split_com.first.to_sym) : send(split_com.first.to_sym, split_com.last)
+          split_com = RbshVariables.command.split(/\s+/, 2)
+          if @shell.respond_to?(split_com.first)
+            output = split_com.length == 1 ? @shell.send(split_com.first.to_sym) : @shell.send(split_com.first.to_sym, split_com.last)
           else
             #output = @arguments.nil? ? send(@command) : send(@command, @arguments)
             begin
-              output = eval(@command, @bind)
+              output = eval(RbshVariables.command, RbshVariables.context)
               output = output.inspect unless output.nil?
             rescue NameError => e
-              system_call
+              @shell.system_call
             rescue SyntaxError => e
-              system_call
+              @shell.system_call
             rescue ArgumentError => e
-              system_call
+              @shell.system_call
             end
           end
         end
 
-        if !@system_command && output && !output.empty?
+        if !RbshVariables.system_command? && output && !output.empty?
           puts '=> ' + output
         end
       end
@@ -100,33 +64,9 @@ class Rbsh
       ruby += input.to_s + "\n"
     end
     begin
-      eval(ruby)
+      eval(ruby, RbshVariables.context)
     rescue Exception => e
       puts e.message
-    end
-  end
-  
-  def system_call
-    return if @system_command
-    sys_output = system "#{@command}"
-    @system_command = true
-    puts "No command or method found: #{@command}" unless sys_output
-    return sys_output
-  end
-  
-  def exit(*args)
-    @running = false
-  end
-  
-  def quit(*args)
-    exit
-  end
-  
-  def method_missing(sym, *args, &block)
-    if @running
-      system_call
-    else
-      RbshHelper.rbshrc_syntax_error
     end
   end
   
