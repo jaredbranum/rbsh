@@ -2,12 +2,8 @@ require './lib/rbsh_variables'
 
 module RbshBuiltins
   
-  def exit(*args)
-    RbshVariables.running = false
-  end
-  
   def quit(*args)
-    exit
+    exit(0)
   end
   
   def cd(dir=nil)
