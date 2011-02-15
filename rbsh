@@ -1,4 +1,10 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env bash
 
-require './lib/rbsh'
-Rbsh.new.main
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+
+/usr/bin/env ruby ./rbsh.rb
+while [[ $? -eq 2 ]]
+do
+  [[ -s "$HOME/.rbsh_bash_command" ]] && . "$HOME/.rbsh_bash_command" && rm "$HOME/.rbsh_bash_command"
+  /usr/bin/env ruby ./rbsh.rb
+done

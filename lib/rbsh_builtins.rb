@@ -2,12 +2,15 @@ require './lib/rbsh_variables'
 
 module RbshBuiltins
   
-  def exit(*args)
-    RbshVariables.running = false
+  def rvm(arg='')
+    File.open(@HOME + '/.rbsh_bash_command', 'w') do |file|
+      file.write("rvm #{arg}")
+    end
+    exit(2)
   end
   
   def quit(*args)
-    exit
+    exit(0)
   end
   
   def cd(dir=nil)
