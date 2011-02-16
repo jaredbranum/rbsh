@@ -16,7 +16,7 @@ class Rbsh
   def main(argv=[])
     while RbshVariables.running?
       if argv.empty?
-        RbshVariables.command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1), true)
+        RbshVariables.command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1.to_s), true)
         execute_command
       else
         argv.each do |cmd|
