@@ -2,6 +2,13 @@ require './lib/rbsh_variables'
 
 module RbshBuiltins
   
+  def rvm(arg='')
+    File.open(@HOME + '/.rbsh_bash_command', 'w') do |file|
+      file.write("rbsh_cmd='cd #{Dir.pwd}'\nrvm #{arg}")
+    end
+    exit(2)
+  end
+  
   def quit(*args)
     exit(0)
   end

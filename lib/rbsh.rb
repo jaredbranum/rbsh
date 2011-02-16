@@ -15,7 +15,6 @@ class Rbsh
   
   def main(argv=[])
     while RbshVariables.running?
-      hostname = `hostname`.chomp.split('.').first
       if argv.empty?
         RbshVariables.command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1), true)
         execute_command
@@ -45,7 +44,6 @@ class Rbsh
       else
         begin
           output = eval(RbshVariables.command, RbshVariables.context)
-          output = output.inspect unless output.nil?
         rescue NameError => e
           @shell.system_call
         rescue SyntaxError => e
@@ -55,7 +53,8 @@ class Rbsh
         end
       end
 
-      if !RbshVariables.system_command? && output && !output.empty?
+      if !RbshVariables.system_command? && output
+        output = output.inspect
         puts '=> ' + output
       end
     end
