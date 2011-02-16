@@ -40,7 +40,12 @@ class Rbsh
       # special case for builtins
       split_com = RbshVariables.command.split(/\s+/, 2)
       if @shell.respond_to?(split_com.first)
-        output = split_com.length == 1 ? @shell.send(split_com.first.to_sym) : @shell.send(split_com.first.to_sym, split_com.last)
+        begin
+          output = split_com.length == 1 ? @shell.send(split_com.first.to_sym) : @shell.send(split_com.first.to_sym, split_com.last)
+        rescue Exception => e
+          output = nil
+          puts "Exception: #{e.message} (#{e.class})"
+        end
       else
         begin
           output = eval(RbshVariables.command, RbshVariables.context)
