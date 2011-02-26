@@ -7,6 +7,11 @@ class Rbsh
   
   def initialize
     @shell ||= Shell.new
+    if File.exists?(ENV['HOME'] + '/.rbsh_history')
+      File.open(ENV['HOME'] + '/.rbsh_history', 'r') do |f|
+        while line = f.gets ; Readline::HISTORY.push(line.chomp) ; end
+      end
+    end
   end
 
   def self.alias(*args)
@@ -17,6 +22,9 @@ class Rbsh
     while RbshVariables.running?
       if argv.empty?
         RbshVariables.command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1.to_s), true)
+        if RbshVariables.command
+          File.open(ENV['HOME'] + '/.rbsh_history', 'a') { |f| f.write(RbshVariables.command + "\n") }
+        end
         execute_command
       else
         argv.each do |cmd|
