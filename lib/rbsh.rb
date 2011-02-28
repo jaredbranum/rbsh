@@ -46,7 +46,7 @@ class Rbsh
       RbshVariables.system_command = false
 
       # special case for builtins
-      split_com = RbshVariables.command.split(/\s+/, 2)
+      split_com = RbshVariables.command.lstrip.split(/\s+/, 2)
       if @shell.respond_to?(split_com.first)
         begin
           output = split_com.length == 1 ? @shell.send(split_com.first.to_sym) : @shell.send(split_com.first.to_sym, split_com.last)
