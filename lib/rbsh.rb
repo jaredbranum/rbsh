@@ -51,17 +51,14 @@ class Rbsh
         begin
           output = split_com.length == 1 ? @shell.send(split_com.first.to_sym) : @shell.send(split_com.first.to_sym, split_com.last)
         rescue Exception => e
+          raise e if e.class == SystemExit # don't stop exit method
           output = nil
           puts "Exception: #{e.message} (#{e.class})"
         end
       else
         begin
           output = eval(RbshVariables.command, RbshVariables.context)
-        rescue NameError => e
-          @shell.system_call
-        rescue SyntaxError => e
-          @shell.system_call
-        rescue ArgumentError => e
+        rescue NameError, SyntaxError, ArgumentError => e
           @shell.system_call
         end
       end
