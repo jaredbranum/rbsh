@@ -47,6 +47,7 @@ class Rbsh
 
       # special case for builtins
       split_com = RbshVariables.command.lstrip.split(/\s+/, 2)
+      return if split_com.first.nil? || split_com.first.empty?
       if @shell.respond_to?(split_com.first)
         begin
           output = split_com.length == 1 ? @shell.send(split_com.first.to_sym) : @shell.send(split_com.first.to_sym, split_com.last)
