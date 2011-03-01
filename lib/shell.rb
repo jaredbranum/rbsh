@@ -53,20 +53,12 @@ class Shell
       return nil
     end
   end
-  
-  def method_missing(sym, *args, &block)
-    if RbshVariables.running?
-      system_call
-    else
-      RbshHelper.rbshrc_syntax_error
-    end
-  end
 
-  def system_call
+  def system_call(command)
     return if RbshVariables.system_command?
-    sys_output = system "#{RbshVariables.command}"
+    sys_output = system "#{command}"
     RbshVariables.system_command = true
-    puts "No command or method found: #{RbshVariables.command}" unless sys_output
+    puts "No command or method found: #{command}" unless sys_output
     return sys_output
   end
   

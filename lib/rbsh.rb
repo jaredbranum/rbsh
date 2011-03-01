@@ -21,32 +21,32 @@ class Rbsh
   def main(argv=[])
     while RbshVariables.running?
       if argv.empty?
-        RbshVariables.command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1.to_s), true)
-        if RbshVariables.command
-          File.open(ENV['HOME'] + '/.rbsh_history', 'a') { |f| f.write(RbshVariables.command + "\n") }
+        command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1.to_s), true)
+        if command
+          File.open(ENV['HOME'] + '/.rbsh_history', 'a') { |f| f.write(command + "\n") }
         end
-        execute_command
+        execute_command(command)
       else
         argv.each do |cmd|
-          RbshVariables.command = cmd
-          execute_command
+          command = cmd
+          execute_command(command)
         end
         argv=[]
       end
     end
   end
   
-  def execute_command
-    if RbshVariables.command.nil?
+  def execute_command(command)
+    if command.nil?
       print "\n"
       exit
-    elsif RbshVariables.command.strip == '#'
+    elsif command.strip == '#'
       multi_line
     else
       RbshVariables.system_command = false
 
       # special case for builtins
-      split_com = RbshVariables.command.lstrip.split(/\s+/, 2)
+      split_com = command.lstrip.split(/\s+/, 2)
       return if split_com.first.nil? || split_com.first.empty?
       if @shell.respond_to?(split_com.first)
         begin
@@ -58,9 +58,9 @@ class Rbsh
         end
       else
         begin
-          output = eval(RbshVariables.command, RbshVariables.context)
-        rescue NameError, SyntaxError, ArgumentError => e
-          @shell.system_call
+          output = eval(command, RbshVariables.context)
+        rescue NameError, SyntaxError, ArgumentError, NoMethodError => e
+          @shell.system_call(command)
         end
       end
 
