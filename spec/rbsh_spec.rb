@@ -8,7 +8,7 @@ describe Rbsh do
   
   describe "main" do
     before do
-      RbshVariables.stub!(:running?).and_return(true, false)
+      @rbsh.stub!(:running?).and_return(true, false)
       File.stub!(:open)
     end
     

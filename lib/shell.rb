@@ -13,7 +13,6 @@ class Shell
     reload!
     
     RbshVariables.context = binding
-    RbshVariables.running = true
     @OLD_PWD ||= @PWD
     nil
   end

@@ -6,6 +6,10 @@ require './lib/shell'
 class Rbsh
   attr_reader :shell
   
+  def running?
+    true
+  end
+  
   def initialize
     @shell ||= Shell.new
     set_environment_variables
@@ -21,7 +25,7 @@ class Rbsh
   end
   
   def main(argv=[])
-    while RbshVariables.running?
+    while running?
       if argv.empty?
         command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1.to_s))
         if command
