@@ -1,2 +1,4 @@
 *.rbc
 *.swp
+.autotest
+autotest/
