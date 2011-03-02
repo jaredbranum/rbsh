@@ -23,9 +23,9 @@ class Rbsh
   def main(argv=[])
     while RbshVariables.running?
       if argv.empty?
-        command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1.to_s), true)
+        command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1.to_s))
         if command
-          File.open(ENV['HOME'] + '/.rbsh_history', 'a') { |f| f.write(command + "\n") }
+          save_command_to_history(command)
         end
         execute_command(command)
       else
@@ -78,6 +78,12 @@ class Rbsh
     @shell.instance_variables.each do |var|
       ENV[var[1..-1]] = @shell.instance_variable_get(var).to_s
     end
+  end
+  
+  def save_command_to_history(cmd)
+    return if cmd.nil? || cmd.empty?
+    Readline::HISTORY.push(cmd)
+    File.open(ENV['HOME'] + '/.rbsh_history', 'a') { |f| f.write(cmd + "\n") }
   end
   
   def multi_line

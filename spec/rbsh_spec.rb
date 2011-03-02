@@ -37,13 +37,6 @@ describe Rbsh do
       @rbsh.should_receive(:execute_command).with("a = 5")
       @rbsh.main(["ls", "echo hello", "a = 5"])
     end
-    
-    it "should write your commands to a .rbsh_history file" do
-      Readline.stub!(:readline).and_return("pwd")
-      @rbsh.should_receive(:execute_command).with("pwd")
-      File.should_receive(:open).with('/home/test/.rbsh_history', 'a')
-      @rbsh.main
-    end
   end
   
   describe "execute_command" do
@@ -91,6 +84,25 @@ describe Rbsh do
     it "should set all shell instance variables to ENV hash values" do
       @rbsh.set_environment_variables
       ENV['PS1'].should == 'rbsh-0.1$ '
+    end
+  end
+  
+  describe "save_command_to_history" do
+    it "should save your commands to a history file" do
+      File.should_receive(:open).with('/home/test/.rbsh_history', 'a')
+      @rbsh.save_command_to_history('pwd')
+    end
+    
+    it "should save your commands to the Readline history" do
+      File.stub!(:open)
+      Readline::HISTORY.should_receive(:push).with('pwd')
+      @rbsh.save_command_to_history('pwd')
+    end
+    
+    it "should not save empty strings or nil values" do
+      File.should_not_receive(:open)
+      Readline::HISTORY.should_not_receive(:push)
+      @rbsh.save_command_to_history('')
     end
   end
   
