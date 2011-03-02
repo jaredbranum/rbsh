@@ -3,7 +3,7 @@ require './lib/rbsh_variables'
 module RbshBuiltins
   
   def rvm(arg='')
-    File.open(@HOME + '/.rbsh_bash_command', 'w') do |file|
+    File.open(ENV['HOME'] + '/.rbsh_bash_command', 'w') do |file|
       file.write("rbsh_cmd='cd #{Dir.pwd}'\nrvm #{arg}")
     end
     exit(2)
@@ -15,14 +15,14 @@ module RbshBuiltins
   
   def cd(dir=nil)
     begin
-      old_prev_dir = @OLD_PWD
+      old_prev_dir = ENV['OLD_PWD']
       if dir.nil? || dir.empty?
         @OLD_PWD = Dir.pwd
         ENV['OLD_PWD'] = Dir.pwd
-        Dir.chdir(@HOME)
+        Dir.chdir(ENV['HOME'])
       else
-        dir = dir.gsub('~', @HOME)
-        dir = @OLD_PWD if dir == '-'
+        dir = dir.gsub('~', ENV['HOME'])
+        dir = ENV['OLD_PWD'] if dir == '-'
         @OLD_PWD = Dir.pwd
         ENV['OLD_PWD'] = Dir.pwd
         Dir.chdir(dir)
