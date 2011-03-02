@@ -7,6 +7,7 @@ class Rbsh
   
   def initialize
     @shell ||= Shell.new
+    set_environment_variables
     if File.exists?(ENV['HOME'] + '/.rbsh_history')
       File.open(ENV['HOME'] + '/.rbsh_history', 'r') do |f|
         while line = f.gets ; Readline::HISTORY.push(line.chomp) ; end
@@ -69,7 +70,13 @@ class Rbsh
         puts '=> ' + output
       end
     end
-    
+    set_environment_variables
+  end
+  
+  def set_environment_variables
+    @shell.instance_variables.each do |var|
+      ENV[var[1..-1]] = @shell.instance_variable_get(var).to_s
+    end
   end
   
   def multi_line

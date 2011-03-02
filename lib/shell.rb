@@ -36,9 +36,6 @@ class Shell
       RbshHelper.rbshrc_syntax_error
     end
     @SHELL = File.expand_path $0
-    instance_variables.each do |var|
-      ENV[var[1..-1]] = instance_variable_get(var)
-    end
     true
   end
 
