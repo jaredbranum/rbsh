@@ -4,6 +4,7 @@ require './lib/rbsh_variables'
 require './lib/shell'
 
 class Rbsh
+  attr_reader :shell
   
   def initialize
     @shell ||= Shell.new

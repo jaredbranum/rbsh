@@ -14,7 +14,6 @@ class Shell
     
     RbshVariables.context = binding
     RbshVariables.running = true
-    @PWD ||= ENV['PWD']
     @OLD_PWD ||= @PWD
     nil
   end
@@ -23,6 +22,7 @@ class Shell
     @PWD ||= ENV['PWD']
     @HOME ||= ENV['HOME']
     @PS1 ||= 'rbsh-0.1$ '
+    @SHELL = File.expand_path $0
     begin
       eval(File.new(@HOME + '/.rbshrc').read, RbshVariables.context)
     rescue Errno::ENOENT => e
@@ -35,7 +35,6 @@ class Shell
     rescue SyntaxError => e
       RbshHelper.rbshrc_syntax_error
     end
-    @SHELL = File.expand_path $0
     true
   end
 

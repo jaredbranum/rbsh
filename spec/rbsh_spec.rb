@@ -1,63 +1,97 @@
-require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh')
-require 'etc'
+require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh.rb')
 
 describe Rbsh do
   before do
-    @shell = Rbsh.new
+    ENV['HOME'] = '/home/test'
+    @rbsh = Rbsh.new
   end
   
-  it "should eval() user input unless special conditions are met" do
-    Readline.stub!(:readline).and_return("public_methods", nil)
-    @shell.should_receive(:eval)
-    @shell.main
-  end
-  
-  it "should call system for unknown commands" do
-    Readline.stub!(:readline).and_return("echo hi", nil)
-    @shell.should_receive(:system).with('echo hi').and_return(true)
-    @shell.main
-  end
-  
-  # describe "method_missing" do
-  #   it "should call system()" do
-  #     @shell.should_receive(:system).with('pwd').and_return(true)
-  #     @shell.method_missing(:pwd)
-  #   end
-  # end
-  
-  describe "cd" do
-    it "should change to the target directory" do
-      @shell.cd('/')
-      Dir.pwd.should == '/'
+  describe "main" do
+    before do
+      RbshVariables.stub!(:running?).and_return(true, false)
+      File.stub!(:open)
     end
     
-    it "should change to the user's home dir when no argument is passed" do
-      @shell.cd
-      Dir.pwd.should == Etc.getpwuid.dir
+    it "should call execute_command for ruby user input" do
+      Readline.stub!(:readline).and_return("public_methods(false).length", nil)
+      @rbsh.should_receive(:execute_command).with("public_methods(false).length")
+      @rbsh.main
     end
     
-    it "should change to the user's home dir when ~ is passed" do
-      @shell.cd('~')
-      Dir.pwd.should == Etc.getpwuid.dir
+    it "should call execute_command for system user input" do
+      Readline.stub!(:readline).and_return("ls -a | wc -l", nil)
+      @rbsh.should_receive(:execute_command).with("ls -a | wc -l")
+      @rbsh.main
     end
     
-    it "should allow the use of ~ in dir paths" do
-      @shell.cd('~/..')
-      Dir.pwd.should == Etc.getpwuid.dir.gsub(/\/[^\/]+$/, '')
+    it "should accept a single command-line argument" do
+      Readline.stub!(:readline).and_return(nil)
+      @rbsh.should_receive(:execute_command).with("cd")
+      @rbsh.main(["cd"])
     end
     
-    it "should go back to the previous dir when called with -" do
-      @shell.cd('/bin')
-      @shell.cd('/')
-      @shell.cd('-')
-      Dir.pwd.should == '/bin'
+    it "should accept multiple command-line arguments" do
+      Readline.stub!(:readline).and_return(nil)
+      @rbsh.should_receive(:execute_command).with("ls")
+      @rbsh.should_receive(:execute_command).with("echo hello")
+      @rbsh.should_receive(:execute_command).with("a = 5")
+      @rbsh.main(["ls", "echo hello", "a = 5"])
+    end
+    
+    it "should write your commands to a .rbsh_history file" do
+      Readline.stub!(:readline).and_return("pwd")
+      @rbsh.should_receive(:execute_command).with("pwd")
+      File.should_receive(:open).with('/home/test/.rbsh_history', 'a')
+      @rbsh.main
     end
   end
   
-  describe "Rbsh.alias" do
-    it "should call define_method" do
-      Rbsh.should_receive(:define_method).with(:la)
-      Rbsh.alias(:la, "ls -a")
+  describe "execute_command" do
+    it "should exit when the input is nil (Ctrl-D)" do
+      @rbsh.should_receive(:exit)
+      @rbsh.execute_command(nil)
+    end
+    
+    it "should enter multi-line mode when the input is '#'" do
+      @rbsh.should_receive(:multi_line)
+      @rbsh.execute_command('#')
+    end
+    
+    it "should do nothing when the input is empty (blank line)" do
+      @rbsh.should_receive(:execute_command).and_return
+      @rbsh.execute_command(nil)
+    end
+    
+    describe "shell methods without parenthesized arguments" do
+      it "should send shell methods if the shell implements that method" do
+        @rbsh.shell.should_receive(:send).with(:cd)
+        @rbsh.execute_command('cd')
+      end
+      
+      it "should send one argument as a string" do
+        @rbsh.shell.should_receive(:send).with(:cd, '..')
+        @rbsh.execute_command('cd ..')
+      end
+      
+      it "should send multiple arguments as a single string" do
+        @rbsh.shell.should_receive(:send).with(:quit, 'a b c d')
+        @rbsh.execute_command('quit a b c d')
+      end
+      
+      it "should re-raise SystemExit exceptions" do
+        @rbsh.shell.should_receive(:send).with(:quit).and_raise(SystemExit)
+        lambda { @rbsh.execute_command('quit') }.should raise_error(SystemExit)
+      end
+    end
+    
+    # TODO: tests for eval and system calls (important!)
+  end
+  
+  describe "set_environment_variables" do
+    it "should set all shell instance variables to ENV hash values" do
+      @rbsh.set_environment_variables
+      ENV['PS1'].should == 'rbsh-0.1$ '
     end
   end
+  
 end
