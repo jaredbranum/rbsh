@@ -53,7 +53,7 @@ class Shell
     return if RbshVariables.system_command?
     sys_output = system "#{command}"
     RbshVariables.system_command = true
-    puts "No command or method found: #{command}" unless sys_output
+    puts "[rbsh] error with command: #{command.split(' ').first}" unless sys_output
     return sys_output
   end
   
