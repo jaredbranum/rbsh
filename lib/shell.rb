@@ -7,7 +7,6 @@ require './lib/rbsh_builtins'
 # available to the end user
 class Shell
   include RbshBuiltins
-  attr_reader :PS1
   
   def initialize
     reload!

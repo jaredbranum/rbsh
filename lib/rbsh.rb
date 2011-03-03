@@ -27,7 +27,8 @@ class Rbsh
   def main(argv=[])
     while running?
       if argv.empty?
-        command = Readline.readline(RbshHelper.parse_ps1(@shell.PS1.to_s))
+        ps1 = RbshHelper.parse_ps1(@shell.instance_variable_get("@PS1")).to_s
+        command = Readline.readline(ps1)
         if command
           save_command_to_history(command)
         end
