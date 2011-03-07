@@ -78,6 +78,26 @@ describe Rbsh do
     end
     
     # TODO: tests for eval and system calls (important!)
+    
+    it "should output the result of ruby commands" do
+      @rbsh.should_receive(:puts).with("=> 5")
+      @rbsh.execute_command('5')
+    end
+    
+    it "should not output the result of ruby commands if the result is nil" do
+      @rbsh.should_not_receive(:puts)
+      @rbsh.execute_command('nil')
+    end
+    
+    it "should output the result of ruby commands if the result is false" do
+      @rbsh.should_receive(:puts).with("=> false")
+      @rbsh.execute_command('1 == 2')
+    end
+    
+    it "should not output the result of shell commands" do
+      @rbsh.should_not_receive(:puts)
+      @rbsh.execute_command('echo shell command')
+    end
   end
   
   describe "set_environment_variables" do

@@ -51,7 +51,8 @@ class Rbsh
       multi_line
     else
       RbshVariables.system_command = false
-
+      output = nil
+      
       # special case for builtins
       split_com = command.lstrip.split(/\s+/, 2)
       return if split_com.first.nil? || split_com.first.empty?
@@ -71,10 +72,7 @@ class Rbsh
         end
       end
 
-      if !RbshVariables.system_command? && output
-        output = output.inspect
-        puts '=> ' + output
-      end
+      puts '=> ' + output.inspect unless output.nil?
     end
     set_environment_variables
   end
@@ -101,7 +99,7 @@ class Rbsh
     begin
       eval(ruby, RbshVariables.context)
     rescue Exception => e
-      puts e.message
+      puts "Exception: #{e.message} (#{e.class})"
     end
   end
   
