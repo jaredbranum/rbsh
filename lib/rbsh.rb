@@ -50,7 +50,6 @@ class Rbsh
     elsif command.strip == '#'
       multi_line
     else
-      RbshVariables.system_command = false
       output = nil
       
       # special case for builtins

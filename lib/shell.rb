@@ -49,9 +49,7 @@ class Shell
   end
 
   def system_call(command)
-    return if RbshVariables.system_command?
     sys_output = system "#{command}"
-    RbshVariables.system_command = true
     puts "[rbsh] error with command: #{command.split(' ').first}" unless sys_output
     return sys_output
   end
