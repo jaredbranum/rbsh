@@ -1,4 +1,4 @@
-require './lib/rbsh_variables'
+require './lib/rbsh_context'
 require './lib/rbsh_helper'
 require './lib/rbsh_builtins'
 
@@ -11,7 +11,7 @@ class Shell
   def initialize
     reload!
     
-    RbshVariables.context = binding
+    RbshContext.binding = binding
     @OLD_PWD ||= @PWD
     nil
   end
@@ -22,13 +22,13 @@ class Shell
     @PS1 ||= 'rbsh-0.1$ '
     @SHELL = File.expand_path $0
     begin
-      eval(File.new(@HOME + '/.rbshrc').read, RbshVariables.context)
+      eval(File.new(@HOME + '/.rbshrc').read, RbshContext.binding)
     rescue Errno::ENOENT => e
     rescue SyntaxError => e
       RbshHelper.rbshrc_syntax_error
     end
     begin
-      eval(File.new(@HOME + '/.rbshrc.rb').read, RbshVariables.context)
+      eval(File.new(@HOME + '/.rbshrc.rb').read, RbshContext.binding)
     rescue Errno::ENOENT => e
     rescue SyntaxError => e
       RbshHelper.rbshrc_syntax_error

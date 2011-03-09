@@ -98,6 +98,13 @@ describe Rbsh do
       @rbsh.should_not_receive(:puts)
       @rbsh.execute_command('echo shell command')
     end
+    
+    it "should evaluate all ruby commands within the same context (binding)" do
+      @rbsh.should_receive(:puts).with('=> 573')
+      @rbsh.execute_command('num = 573')
+      @rbsh.should_receive(:puts).with('=> 613')
+      @rbsh.execute_command('num + 40')
+    end
   end
   
   describe "set_environment_variables" do

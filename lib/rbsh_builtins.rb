@@ -1,5 +1,3 @@
-require './lib/rbsh_variables'
-
 module RbshBuiltins
   
   def rvm(arg='')

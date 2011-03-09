@@ -1,6 +1,6 @@
 require 'readline'
 require './lib/rbsh_helper'
-require './lib/rbsh_variables'
+require './lib/rbsh_context'
 require './lib/shell'
 
 class Rbsh
@@ -65,7 +65,7 @@ class Rbsh
         end
       else
         begin
-          output = eval(command, RbshVariables.context)
+          output = eval(command, RbshContext.binding)
         rescue NameError, SyntaxError, ArgumentError, NoMethodError => e
           @shell.system_call(command)
         end
@@ -96,7 +96,7 @@ class Rbsh
       ruby += input.to_s + "\n"
     end
     begin
-      eval(ruby, RbshVariables.context)
+      eval(ruby, RbshContext.binding)
     rescue Exception => e
       puts "Exception: #{e.message} (#{e.class})"
     end
