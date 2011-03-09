@@ -1,3 +1,5 @@
+require './lib/rbsh_context'
+
 module RbshBuiltins
   
   def rvm(arg='')
@@ -5,6 +7,16 @@ module RbshBuiltins
       file.write("rbsh_cmd='cd #{Dir.pwd}'\nrvm #{arg}")
     end
     exit(2)
+  end
+  
+  def source(file=nil)
+    return false unless file
+    begin
+      eval(File.read(File.expand_path(file).strip), RbshContext.binding)
+    rescue Exception => e
+      return false
+    end
+    return true
   end
   
   def quit(*args)

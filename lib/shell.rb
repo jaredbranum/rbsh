@@ -1,5 +1,4 @@
 require './lib/rbsh_context'
-require './lib/rbsh_helper'
 require './lib/rbsh_builtins'
 
 # all shell commands are run within an instance of the Shell class
@@ -13,7 +12,7 @@ class Shell
     
     RbshContext.binding = binding
     @OLD_PWD ||= @PWD
-    nil
+    return nil
   end
   
   def reload!
@@ -21,19 +20,9 @@ class Shell
     @HOME ||= ENV['HOME']
     @PS1 ||= 'rbsh-0.1$ '
     @SHELL = File.expand_path $0
-    begin
-      eval(File.new(@HOME + '/.rbshrc').read, RbshContext.binding)
-    rescue Errno::ENOENT => e
-    rescue SyntaxError => e
-      RbshHelper.rbshrc_syntax_error
-    end
-    begin
-      eval(File.new(@HOME + '/.rbshrc.rb').read, RbshContext.binding)
-    rescue Errno::ENOENT => e
-    rescue SyntaxError => e
-      RbshHelper.rbshrc_syntax_error
-    end
-    true
+    source(@HOME + '/.rbshrc')
+    source(@HOME + '/.rbshrc.rb')
+    return true
   end
 
   def self.alias(sym, cmd)

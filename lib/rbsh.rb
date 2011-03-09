@@ -27,7 +27,7 @@ class Rbsh
   def main(argv=[])
     while running?
       if argv.empty?
-        ps1 = RbshHelper.parse_ps1(@shell.instance_variable_get("@PS1")).to_s
+        ps1 = RbshHelper.parse_ps1(@shell.instance_variable_get("@PS1").to_s)
         command = Readline.readline(ps1)
         if command
           save_command_to_history(command)
@@ -68,6 +68,8 @@ class Rbsh
           output = eval(command, RbshContext.binding)
         rescue NameError, SyntaxError, ArgumentError, NoMethodError => e
           @shell.system_call(command)
+        rescue LoadError => e
+          puts "Exception: #{e.message} (#{e.class})"
         end
       end
 

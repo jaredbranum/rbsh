@@ -36,16 +36,23 @@ Multi-line input is not (yet) supported for non-Ruby commands.
 Parenthesized arguments are always taken as you passed them. Non-parenthesized arguments (to methods defined within the shell context) will be interpreted as a single string and passed as the first argument. This may seem unusual at a glance, but for built-in methods like `cd`, it ends up being quite natural. This allows you to type `cd /etc` instead of `cd('/etc')`. You can always parenthesize arguments if you need to pass other types of objects.
 
 ### Built-in methods
-Currently rbsh has 4 built-in methods:
+Currently rbsh has 5 built-in methods:
 
 * `cd`
 * `quit`
+* `source`
 * `reload!`
 * `rvm`
 
 `cd` takes one argument. It will change your working directory to the specified directory. All instances of the ~ character will be taken to mean your home directory. Passing a dash (hyphen) as the only argument will return you to your last working directory. No argument (or a nil argument) will take you to your home directory.
 
-`quit` just calls `exit(0)`. `reload!` will set all your shell instance variables to matching environment variables (which is already done when starting the shell) and reload your .rbshrc file (discussed below). Information on `rvm` can be found under the header _RVM Support_.
+`quit` just calls `exit(0)`.
+
+`source` takes a path to a file as its only argument. This path can be either relative or absolute, and can contain the ~ character to represent home directories. The sourced file will be evaluated as Ruby code within the shell, just as if you had typed it into the shell. `source` returns true upon success and false if there were any errors reading the file or evaluating the contents.
+
+`reload!` will set all your shell instance variables to matching environment variables (which is already done when starting the shell) and source your .rbshrc file(s) (discussed below).
+
+Information on `rvm` can be found under the header _RVM Support_.
 
 ### Custom .rbshrc file
 New methods, aliases, and shell variables can be defined in a .rbshrc file (with an optional .rb extension) in your home directory. This file can contain any valid Ruby code, which will be evaluated within the context of your shell. Instance variables set here will translate to shell environment variables. The `Shell.alias` method is provided as a convenience, and takes 2 arguments (a symbol and a string).  

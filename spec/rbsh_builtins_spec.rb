@@ -18,6 +18,30 @@ describe RbshBuiltins do
     end
   end
   
+  describe "source" do
+    it "should return false if no file is given" do
+      @shell.source.should be_false
+    end
+    
+    it "should return false if the file given does not exist" do
+      File.should_receive(:read).and_raise(Exception)
+      @shell.source('/path/to/fake/file').should be_false
+    end
+    
+    it "should return false if the file given raises exceptions" do
+      File.should_receive(:expand_path).with('bad.rb').and_return('./bad.rb')
+      File.should_receive(:read).with('./bad.rb').and_return('bad = syntax')
+      @shell.source('bad.rb').should be_false
+    end
+    
+    it "should eval the file if it exists and return true if there are no exceptions" do
+      File.should_receive(:expand_path).with('lol.rb').and_return('./lol.rb')
+      File.should_receive(:read).with('./lol.rb').and_return('lol = 100')
+      @shell.should_receive(:eval).with('lol = 100', RbshContext.binding)
+      @shell.source('lol.rb').should be_true
+    end
+  end
+  
   describe "quit" do
     it "should exit the shell" do
       @shell.should_receive(:exit).with(0)
