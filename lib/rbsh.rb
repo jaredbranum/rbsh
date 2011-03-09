@@ -1,7 +1,7 @@
+require File.expand_path(File.dirname(__FILE__) + '/helper.rb')
+require File.expand_path(File.dirname(__FILE__) + '/context.rb')
+require File.expand_path(File.dirname(__FILE__) + '/shell.rb')
 require 'readline'
-require './lib/helper'
-require './lib/context'
-require './lib/shell'
 
 class Rbsh
   attr_reader :shell

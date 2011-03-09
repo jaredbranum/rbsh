@@ -1,4 +1,4 @@
-require './lib/context'
+require File.expand_path(File.dirname(__FILE__) + '/context.rb')
 
 module RbshBuiltins
   

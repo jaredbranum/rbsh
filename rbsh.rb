@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
-require './lib/rbsh'
+require File.expand_path(File.dirname(__FILE__) + '/lib/rbsh.rb')
 Rbsh.new.main(ARGV)

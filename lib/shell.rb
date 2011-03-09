@@ -1,6 +1,6 @@
-require './lib/builtins'
-require './lib/constants'
-require './lib/context'
+require File.expand_path(File.dirname(__FILE__) + '/builtins.rb')
+require File.expand_path(File.dirname(__FILE__) + '/constants.rb')
+require File.expand_path(File.dirname(__FILE__) + '/context.rb')
 
 # all shell commands are run within an instance of the Shell class
 # any variables and methods defined in this class will be directly
