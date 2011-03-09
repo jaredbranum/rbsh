@@ -57,22 +57,22 @@ describe Rbsh do
     
     describe "shell methods without parenthesized arguments" do
       it "should send shell methods if the shell implements that method" do
-        @rbsh.shell.should_receive(:send).with(:cd)
+        @rbsh.shell.should_receive(:cd)
         @rbsh.execute_command('cd')
       end
       
       it "should send one argument as a string" do
-        @rbsh.shell.should_receive(:send).with(:cd, '..')
+        @rbsh.shell.should_receive(:cd).with('..')
         @rbsh.execute_command('cd ..')
       end
       
       it "should send multiple arguments as a single string" do
-        @rbsh.shell.should_receive(:send).with(:quit, 'a b c d')
+        @rbsh.shell.should_receive(:quit).with('a b c d')
         @rbsh.execute_command('quit a b c d')
       end
       
       it "should re-raise SystemExit exceptions" do
-        @rbsh.shell.should_receive(:send).with(:quit).and_raise(SystemExit)
+        @rbsh.shell.should_receive(:quit).and_raise(SystemExit)
         lambda { @rbsh.execute_command('quit') }.should raise_error(SystemExit)
       end
     end
