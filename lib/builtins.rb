@@ -1,4 +1,4 @@
-require './lib/rbsh_context'
+require './lib/context'
 
 module RbshBuiltins
   

@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh_builtins.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/builtins.rb')
 
 class Shell
   ENV['HOME'] = '/home/test'

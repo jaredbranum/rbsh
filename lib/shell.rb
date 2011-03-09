@@ -1,5 +1,5 @@
-require './lib/rbsh_context'
-require './lib/rbsh_builtins'
+require './lib/context'
+require './lib/builtins'
 
 # all shell commands are run within an instance of the Shell class
 # any variables and methods defined in this class will be directly

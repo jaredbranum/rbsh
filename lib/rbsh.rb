@@ -1,6 +1,6 @@
 require 'readline'
-require './lib/rbsh_helper'
-require './lib/rbsh_context'
+require './lib/helper'
+require './lib/context'
 require './lib/shell'
 
 class Rbsh
