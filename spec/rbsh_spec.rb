@@ -1,4 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/constants.rb')
+include RbshConstants
 
 describe Rbsh do
   before do
@@ -110,7 +112,7 @@ describe Rbsh do
   describe "set_environment_variables" do
     it "should set all shell instance variables to ENV hash values" do
       @rbsh.set_environment_variables
-      ENV['PS1'].should == 'rbsh-0.1$ '
+      ENV['PS1'].should == DEFAULT_PROMPT
     end
   end
   

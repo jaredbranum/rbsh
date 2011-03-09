@@ -1,5 +1,6 @@
-require './lib/context'
 require './lib/builtins'
+require './lib/constants'
+require './lib/context'
 
 # all shell commands are run within an instance of the Shell class
 # any variables and methods defined in this class will be directly
@@ -18,7 +19,7 @@ class Shell
   def reload!
     @PWD ||= ENV['PWD']
     @HOME ||= ENV['HOME']
-    @PS1 ||= 'rbsh-0.1$ '
+    @PS1 ||= RbshConstants.const_get(:DEFAULT_PROMPT)
     @SHELL = File.expand_path $0
     source(@HOME + '/.rbshrc')
     source(@HOME + '/.rbshrc.rb')
