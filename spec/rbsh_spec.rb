@@ -10,20 +10,8 @@ describe Rbsh do
   
   describe "main" do
     before do
-      @rbsh.stub!(:running?).and_return(true, false)
-      File.stub!(:open)
-    end
-    
-    it "should call execute_command for ruby user input" do
-      Readline.stub!(:readline).and_return("public_methods(false).length", nil)
-      @rbsh.should_receive(:execute_command).with("public_methods(false).length")
-      @rbsh.main
-    end
-    
-    it "should call execute_command for system user input" do
-      Readline.stub!(:readline).and_return("ls -a | wc -l", nil)
-      @rbsh.should_receive(:execute_command).with("ls -a | wc -l")
-      @rbsh.main
+      @rbsh.stub!(:running? => false)
+      @rbsh.stub!(:accept_input)
     end
     
     it "should accept a single command-line argument" do
@@ -38,6 +26,24 @@ describe Rbsh do
       @rbsh.should_receive(:execute_command).with("echo hello")
       @rbsh.should_receive(:execute_command).with("a = 5")
       @rbsh.main(["ls", "echo hello", "a = 5"])
+    end
+  end
+  
+  describe "accept_input" do
+    before do
+      File.stub!(:open)
+    end
+    
+    it "should call execute_command for ruby user input" do
+      Readline.stub!(:readline).and_return("public_methods(false).length", nil)
+      @rbsh.should_receive(:execute_command).with("public_methods(false).length")
+      @rbsh.accept_input
+    end
+    
+    it "should call execute_command for system user input" do
+      Readline.stub!(:readline).and_return("ls -a | wc -l", nil)
+      @rbsh.should_receive(:execute_command).with("ls -a | wc -l")
+      @rbsh.accept_input
     end
   end
   

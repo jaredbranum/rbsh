@@ -6,10 +6,6 @@ require 'readline'
 class Rbsh
   attr_reader :shell
   
-  def running?
-    true
-  end
-  
   def initialize
     @shell ||= Shell.new
     set_environment_variables
@@ -19,28 +15,27 @@ class Rbsh
       end
     end
   end
-
-  def self.alias(*args)
-    Shell.alias(*args)
-  end
   
   def main(argv=[])
-    while running?
-      if argv.empty?
-        ps1 = RbshHelper.parse_ps1(@shell.instance_variable_get("@PS1").to_s)
-        command = Readline.readline(ps1)
-        if command
-          save_command_to_history(command)
-        end
+    unless argv.empty?
+      argv.each do |cmd|
+        command = cmd
         execute_command(command)
-      else
-        argv.each do |cmd|
-          command = cmd
-          execute_command(command)
-        end
-        argv=[]
       end
+      argv=[]
     end
+    accept_input while running?
+  end
+
+  def running? ; true ; end
+  
+  def accept_input
+    ps1 = RbshHelper.parse_ps1(@shell.instance_variable_get("@PS1").to_s)
+    command = Readline.readline(ps1)
+    if command
+      save_command_to_history(command)
+    end
+    execute_command(command)
   end
   
   def execute_command(command)
@@ -102,6 +97,10 @@ class Rbsh
     rescue Exception => e
       puts "Exception: #{e.message} (#{e.class})"
     end
+  end
+  
+  def self.alias(*args)
+    Shell.alias(*args)
   end
   
 end
