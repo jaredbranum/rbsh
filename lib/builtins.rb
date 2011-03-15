@@ -1,6 +1,15 @@
 require File.expand_path(File.dirname(__FILE__) + '/context.rb')
+require 'readline'
 
 module RbshBuiltins
+  
+  # define sudo!! method
+  def self.included(par)
+    par.send :define_method, :"sudo!!" do
+      system "sudo #{Readline::HISTORY[-2].to_s}"
+      nil
+    end
+  end
   
   def rvm(arg='')
     File.open(ENV['HOME'] + '/.rbsh_bash_command', 'w') do |file|

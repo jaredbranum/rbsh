@@ -10,6 +10,30 @@ describe RbshBuiltins do
     @shell = Shell.new
   end
   
+  describe "sudo!!" do
+    it "should execute the last command entered as root as a system command" do
+      Readline::HISTORY = []
+      Readline::HISTORY.push('ls')
+      Readline::HISTORY.push('sudo!!')
+      @shell.should_receive(:system).with("sudo ls")
+      @shell.send(:"sudo!!")
+    end
+    
+    it "should execute commands with command line arguments" do
+      Readline::HISTORY = []
+      Readline::HISTORY.push('ls -a -l /')
+      Readline::HISTORY.push('sudo!!')
+      @shell.should_receive(:system).with("sudo ls -a -l /")
+      @shell.send(:"sudo!!")
+    end
+    
+    it "should not execute ruby code" do
+      @shell.should_receive(:system)
+      @shell.should_not_receive(:eval)
+      @shell.send(:"sudo!!")
+    end
+  end
+  
   describe "rvm" do
     it "should write the rvm command to a file and exit" do
       File.should_receive(:open).with('/home/test/.rbsh_bash_command', 'w')
