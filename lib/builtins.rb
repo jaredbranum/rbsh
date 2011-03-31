@@ -11,11 +11,16 @@ module RbshBuiltins
     end
   end
   
-  def rvm(arg='')
+  def bash(arg=nil)
+    return unless arg
     File.open(ENV['HOME'] + '/.rbsh_bash_command', 'w') do |file|
-      file.write("rbsh_cmd='cd #{Dir.pwd}'\nrvm #{arg}")
+      file.write("rbsh_cmd='cd #{Dir.pwd}'\n#{arg}")
     end
     exit(2)
+  end
+  
+  def rvm(arg='')
+    bash "rvm #{arg}"
   end
   
   def source(file=nil)
@@ -25,7 +30,7 @@ module RbshBuiltins
     rescue Exception => e
       return false
     end
-    return true
+    true
   end
   
   def quit(*args)
@@ -53,7 +58,7 @@ module RbshBuiltins
     end
     @PWD = Dir.pwd
     ENV['PWD'] = Dir.pwd
-    return nil
+    nil
   end
   
 end

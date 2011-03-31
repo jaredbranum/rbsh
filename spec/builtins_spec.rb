@@ -34,10 +34,17 @@ describe RbshBuiltins do
     end
   end
   
-  describe "rvm" do
-    it "should write the rvm command to a file and exit" do
+  describe "bash" do
+    it "should write the bash command to a file and exit" do
       File.should_receive(:open).with('/home/test/.rbsh_bash_command', 'w')
       @shell.should_receive(:exit).with(2)
+      @shell.bash 'echo $PWD'
+    end
+  end
+  
+  describe "rvm" do
+    it "should execute rvm commands through bash" do
+      @shell.should_receive(:bash).with('rvm 1.8.7')
       @shell.rvm '1.8.7'
     end
   end

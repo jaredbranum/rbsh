@@ -36,13 +36,14 @@ Multi-line input is not (yet) supported for non-Ruby commands.
 Parenthesized arguments are always taken as you passed them. Non-parenthesized arguments (to methods defined within the shell context) will be interpreted as a single string and passed as the first argument. This may seem unusual at a glance, but for built-in methods like `cd`, it ends up being quite natural. This allows you to type `cd /etc` instead of `cd('/etc')`. You can always parenthesize arguments if you need to pass other types of objects.
 
 ### Built-in methods
-Currently rbsh has 6 built-in methods:
+Currently rbsh has 7 built-in methods:
 
 * `cd`
 * `quit`
 * `source`
 * `reload!`
 * `sudo!!`
+* `bash`
 * `rvm`
 
 `cd` takes one argument. It will change your working directory to the specified directory. All instances of the ~ character will be taken to mean your home directory. Passing a dash (hyphen) as the only argument will return you to your last working directory. No argument (or a nil argument) will take you to your home directory.
@@ -54,6 +55,8 @@ Currently rbsh has 6 built-in methods:
 `reload!` will set all your shell instance variables to matching environment variables (which is already done when starting the shell) and source your .rbshrc file(s) (discussed below).
 
 `sudo!!` prefixes the last command you entered with "sudo " and executes it as a system command. This is similar to `sudo !!` in bash.
+
+`bash` takes one string (a bash command) as an argument. It will exit the current rbsh shell instance, execute the command in the parent bash shell, then return you to a new rbsh shell (persisting the working directory you were in originally). This will eliminate any local variables and methods that you had defined, but it is useful when you run across something that doesn't quite work correctly in rbsh.
 
 Information on `rvm` can be found under the header _RVM Support_.
 
