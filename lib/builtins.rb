@@ -20,7 +20,7 @@ module RbshBuiltins
   end
   
   def rvm(arg='')
-    bash "rvm #{arg}"
+    bash! "rvm #{arg}"
   end
   
   def source(file=nil)
