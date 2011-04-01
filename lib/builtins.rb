@@ -11,7 +11,7 @@ module RbshBuiltins
     end
   end
   
-  def bash(arg=nil)
+  def bash!(arg=nil)
     return unless arg
     File.open(ENV['HOME'] + '/.rbsh_bash_command', 'w') do |file|
       file.write("rbsh_cmd='cd #{Dir.pwd}'\ncd #{Dir.pwd}\n#{arg}")

@@ -38,7 +38,7 @@ describe RbshBuiltins do
     it "should write the bash command to a file and exit" do
       File.should_receive(:open).with('/home/test/.rbsh_bash_command', 'w')
       @shell.should_receive(:exit).with(2)
-      @shell.bash 'echo $PWD'
+      @shell.bash! 'echo $PWD'
     end
   end
   
