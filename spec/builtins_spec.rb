@@ -44,7 +44,7 @@ describe RbshBuiltins do
   
   describe "rvm" do
     it "should execute rvm commands through bash" do
-      @shell.should_receive(:bash).with('rvm 1.8.7')
+      @shell.should_receive(:bash!).with('rvm 1.8.7')
       @shell.rvm '1.8.7'
     end
   end
