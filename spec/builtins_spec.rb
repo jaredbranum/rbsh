@@ -1,11 +1,11 @@
-require File.expand_path(File.dirname(__FILE__) + '/../lib/builtins.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh/builtins.rb')
 
 class Shell
   ENV['HOME'] = '/home/test'
-  include RbshBuiltins
+  include Rbsh::Builtins
 end
 
-describe RbshBuiltins do
+describe Rbsh::Builtins do
   before do
     @shell = Shell.new
   end
@@ -68,7 +68,7 @@ describe RbshBuiltins do
     it "should eval the file if it exists and return true if there are no exceptions" do
       File.should_receive(:expand_path).with('lol.rb').and_return('./lol.rb')
       File.should_receive(:read).with('./lol.rb').and_return('lol = 100')
-      @shell.should_receive(:eval).with('lol = 100', RbshContext.binding)
+      @shell.should_receive(:eval).with('lol = 100', Rbsh::Context.binding)
       @shell.source('lol.rb').should be_true
     end
   end

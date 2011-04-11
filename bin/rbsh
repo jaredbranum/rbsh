@@ -3,10 +3,10 @@
 ORIGDIR=$PWD
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
-/usr/bin/env ruby `dirname $0`/rbsh.rb "$@"
+/usr/bin/env ruby `dirname $0`/../lib/rbsh.rb "$@"
 while [[ $? -eq 2 ]]
 do
   [[ -s "$HOME/.rbsh_bash_command" ]] && . "$HOME/.rbsh_bash_command" && rm "$HOME/.rbsh_bash_command"
   cd $ORIGDIR
-  /usr/bin/env ruby `dirname $0`/rbsh.rb "$rbsh_cmd"
+  /usr/bin/env ruby `dirname $0`/../lib/rbsh.rb "$rbsh_cmd"
 done

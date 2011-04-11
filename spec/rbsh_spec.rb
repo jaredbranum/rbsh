@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh.rb')
-require File.expand_path(File.dirname(__FILE__) + '/../lib/constants.rb')
-include RbshConstants
+require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh/rbsh.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/rbsh/constants.rb')
+include Rbsh::Constants
 
 describe Rbsh do
   before do
