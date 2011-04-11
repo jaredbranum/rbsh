@@ -9,11 +9,10 @@ class Shell
   include RbshBuiltins
   
   def initialize
-    reload!
-    
     RbshContext.binding = binding
+    reload!
     @OLD_PWD ||= @PWD
-    return nil
+    nil
   end
   
   def reload!
@@ -34,14 +33,14 @@ class Shell
       else
         system "#{cmd} #{arg.first}"
       end
-      return nil
+      nil
     end
   end
 
   def system_call(command)
     sys_output = system "#{command}"
     puts "[rbsh] error with command: #{command.split(' ').first}" unless sys_output
-    return sys_output
+    sys_output
   end
   
 end
