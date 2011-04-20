@@ -41,9 +41,9 @@ Currently rbsh has 7 built-in methods:
 * `cd`
 * `quit`
 * `source`
-* `reload!`
 * `sudo!!`
-* `bash`
+* `reload!`
+* `bash!`
 * `rvm`
 
 `cd` takes one argument. It will change your working directory to the specified directory. All instances of the ~ character will be taken to mean your home directory. Passing a dash (hyphen) as the only argument will return you to your last working directory. No argument (or a nil argument) will take you to your home directory.
@@ -52,11 +52,11 @@ Currently rbsh has 7 built-in methods:
 
 `source` takes a path to a file as its only argument. This path can be either relative or absolute, and can contain the ~ character to represent home directories. The sourced file will be evaluated as Ruby code within the shell, just as if you had typed it into the shell. `source` returns true upon success and false if there were any errors reading the file or evaluating the contents.
 
-`reload!` will set all your shell instance variables to matching environment variables (which is already done when starting the shell) and source your .rbshrc file(s) (discussed below).
-
 `sudo!!` prefixes the last command you entered with "sudo " and executes it as a system command. This is similar to `sudo !!` in bash.
 
-`bash` takes one string (a bash command) as an argument. It will exit the current rbsh shell instance, execute the command in the parent bash shell, then return you to a new rbsh shell (persisting the working directory you were in originally). This will eliminate any local variables and methods that you had defined, but it is useful when you run across something that doesn't quite work correctly in rbsh.
+`reload!` will set all your shell instance variables to matching environment variables (which is already done when starting the shell) and source your .rbshrc file(s) (discussed below).
+
+`bash!` takes one string (a bash command) as an argument. It will exit the current rbsh shell instance, execute the command in the parent bash shell, then return you to a new rbsh shell (persisting the working directory you were in originally). This will eliminate any local variables and methods that you had defined, but it is useful when you run across something that doesn't quite work correctly in rbsh.
 
 Information on `rvm` can be found under the header _RVM Support_.
 
