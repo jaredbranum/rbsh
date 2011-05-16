@@ -1,7 +1,8 @@
 # rbsh
-## A Ruby Shell
+## An interactive Ruby shell that can also be used as a Unix shell replacement
 
-Usage: ./rbsh 
+Usage: ./bin/rbsh 
+_(Gem coming soon)_
 
 Use the shell as you would any shell (bash, zsh, ksh). Lots of things don't work yet. Ruby does, which is pretty sweet. You can do either:
 
